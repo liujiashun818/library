@@ -65,6 +65,10 @@ module.exports = {
     new webpack.DefinePlugin({
       OBJ: JSON.stringify({ key1: 'this is value' }),
     }),
+    new webpack.ProvidePlugin({
+                  $: "jquery",
+                   jQuery: "jquery"
+               })
   ],
   module: {
     rules: [

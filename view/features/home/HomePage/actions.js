@@ -1,8 +1,8 @@
 import {QUERY} from './actionTypes.js';
-export const query = (value) =>{
+export const queryResult = (value) =>{
   return {
     'type': QUERY,
     'info': value
   }
 }
-export default {query};
+export default {queryResult};
