@@ -5,7 +5,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const isProd = process.env.NODE_ENV === 'production';
 
-const cssDev = ['style-loader', 'css-loader',  {
+const lessDev = ['style-loader', 'css-loader',  {
   loader: 'postcss-loader',
   options: {
     sourceMap: true,
@@ -14,26 +14,30 @@ const cssDev = ['style-loader', 'css-loader',  {
     },
   },
 }, 'less-loader'];
-const cssProd = ExtractTextPlugin.extract({
+const lessProd = ExtractTextPlugin.extract({
   fallback: 'style-loader',
   use: ['css-loader',  {
     loader: 'postcss-loader',
     options: {
       sourceMap: true,
+      importLoaders: true,
+      modules: false,
+      localIdentName: '[name]_[local]_[hash:base64:3]',
+      minimize: true,
       config: {
         path: '.postcssrc.js',
       },
     },
   }, 'less-loader'],
 });
-const cssConfig = isProd ? cssProd : cssDev;
+const lessConfig = isProd ? lessProd : lessDev;
 console.log('?process.env.NODE_ENV??', process.env.NODE_ENV);
 
 module.exports = {
   devtool: 'source-map',
   entry: {
-    'app.bundle': './src/app.js',
-    contact: './src/contact.js',
+    'app.bundle': './view/app.js',
+    // contact: './view/contact.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -41,26 +45,15 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html',
+      template: './view/index.html',
       filename: 'index.html',
       minify: {
         collapseWhitespace: true,
       },
       hash: true,
-      // 这行是第二个contact.html新增的。
-      excludeChunks: ['contact'],
+      // 这行是第二个contact.html新增的。暂时把contact.html给删除了
+      // excludeChunks: ['contact'],
     }),
-
-    new HtmlWebpackPlugin({
-      template: './src/contact.html',
-      filename: 'contact.html',
-      minify: {
-        collapseWhitespace: true,
-      },
-      hash: true,
-      chunks: ['contact'],
-    }),
-
     new ExtractTextPlugin({
       filename: 'style.css',
       disable: !isProd,
@@ -75,16 +68,38 @@ module.exports = {
   ],
   module: {
     rules: [
-      { test: /\.less$/, use: cssConfig },
-      { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
-      { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ },
+      { test: /\.less$/, use: lessConfig },
+      {//antd样式处理
+        test:/\.css$/,
+        exclude:/src/,
+        use:[
+            { loader: "style-loader",},
+            {
+                loader: "css-loader",
+                options:{
+                    importLoaders:1
+                }
+            }
+        ]
+      },
+      { 
+        test: /\.(js|jsx)$/, 
+        loader: 'babel-loader', 
+        options: {
+          plugins: [
+            ['import', {
+                libraryName: 'antd',
+                style: 'css'
+            }]
+        ]
+        },
+        exclude: /node_modules/ 
+      },
+      // { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ },
       {
         test: /\.html$/,
         use: [{
           loader: 'html-loader',
-          options: {
-            minimize: true,
-          },
         }],
       }, {
         test: /\.(gif|png|jpe?g|svg)$/i,
@@ -100,7 +115,7 @@ module.exports = {
       }, {
         enforce: 'pre',
         test: /\.(js|jsx)$/,
-        loader: 'eslint-loader',
+        // loader: 'eslint-loader',
         exclude: /node_modules/,
       },
     ],
