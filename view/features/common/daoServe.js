@@ -35,7 +35,7 @@ export const dao = ({
     userId: '1234',
     // userId: window.gladder.userInfo.workid,
     // userName: window.gladder.userInfo.name,
-    userName: 'ljs'
+    userName: 'tom'
   };
 
   data = { ...data, ...params };
@@ -88,7 +88,7 @@ export const dao = ({
       if (typeof response === 'string') {
         response = JSON.parse(response);
       }
-      if (String(response.errorCode) === '0') {
+      if (String(response.code) === '0') {
         if (route) {
           location.href = location.origin + route;
         }

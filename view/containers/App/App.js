@@ -36,7 +36,6 @@ import { domaList } from '../../untils/domanList';
              </SubMenu>
            )
          });
-         console.log('menus', menus)
          return menus;
       } else{
         return <span/>
@@ -44,7 +43,6 @@ import { domaList } from '../../untils/domanList';
 
     }
     render() {
-      console.log('this.props.children',this.props);
         return(
             <Layout>
             <Header className="header">
@@ -79,8 +77,6 @@ import { domaList } from '../../untils/domanList';
                       <Link to='/'>{sb.title}</Link>
                     </MenuItem>  
                   </SubMenu> */}
-
-
 
                 </Menu>
               </Sider>
